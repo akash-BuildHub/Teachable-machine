@@ -6,22 +6,7 @@
 <meta name="description" content="Teachable Machine UI - capture and manage image samples for machine learning">
 <title>Teachable Machine</title>
 <style>
-
-/* Responsive */
-@media (max-width: 768px) {
-  .class-box, .add-class { max-width: 90%; flex: 1 1 90%; }
-  .btn { font-size: 0.8rem; min-width: 80px; }
-  .sample-item img { width: 45px; height: 45px; }
-  video { max-width: 250px; }
-}
-
-@media (max-width: 480px) {
-  h1 { font-size: 1.5rem; margin: 20px 0; }
-  .btn { font-size: 0.75rem; padding: 6px; }
-  .add-class { height: 150px; font-size: 0.9rem; }
-  .video-container video { max-width: 200px; }
-}
-
+/* ---------- Base Styles ---------- */
 body {
   margin: 0;
   padding: 0;
@@ -284,6 +269,71 @@ video {
   font-weight: bold;
   cursor: pointer;
 }
+
+/* ---------- Responsive adjustments ---------- */
+
+/* For tablets and small screens */
+@media (max-width: 768px) {
+  .class-box, .add-class {
+    width: 90%;
+    flex: 1 1 90%;
+  }
+  .btn {
+    font-size: 0.8rem;
+    padding: 8px;
+    min-width: 80px;
+  }
+  .sample-item img {
+    width: 50px;
+    height: 50px;
+  }
+  video {
+    max-width: 250px;
+  }
+  .video-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* For mobile phones */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .btn {
+    font-size: 0.75rem;
+    padding: 6px;
+  }
+  .add-class {
+    width: 90%;
+    height: 150px;
+    font-size: 0.9rem;
+  }
+  .video-container video {
+    max-width: 200px;
+  }
+  .class-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .menu {
+    font-size: 18px;
+  }
+  .btn-row {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Scrollable samples preview for mobile */
+.samples-preview {
+  overflow-x: auto;
+  padding: 4px;
+}
 </style>
 </head>
 
@@ -347,26 +397,19 @@ window.addEventListener("click", e => {
     document.querySelectorAll('.menu-options').forEach(m=>m.style.display="none");
 });
 
-/* Global update function - moved here so global functions can call it */
 function updateMenuOptions(box){
   if(!box) return;
   const preview = box.querySelector('.samples-preview');
   const hasImages = preview && preview.querySelectorAll('img').length > 0;
   const menuOptions = box.querySelectorAll('.menu-options div');
-
   menuOptions.forEach(opt => {
     const txt = (opt.textContent || "").trim();
-    // match by keywords to be robust
     if(txt.includes("Remove All") || txt.includes("Download")){
       if(hasImages) opt.classList.remove('disabled-option');
       else opt.classList.add('disabled-option');
     }
   });
 }
-
-/* ---------------------------
-   Global action functions
-   --------------------------- */
 
 function deleteClass(el) {
   const classBox = el.closest('.class-box');
@@ -378,9 +421,8 @@ function deleteClass(el) {
 function removeSamples(el) { 
   const classBox = el.closest('.class-box');
   const preview = classBox.querySelector('.samples-preview');
-  preview.innerHTML = "";            // Remove all images
-  updateMenuOptions(classBox);       // Update menu buttons
-  // optionally close the menu
+  preview.innerHTML = "";
+  updateMenuOptions(classBox);
   const menu = classBox.querySelector('.menu-options');
   if(menu) menu.style.display = 'none';
 }
@@ -401,17 +443,13 @@ function downloadSamples(el) {
   });
 }
 
-/* ---------------------------
-   Class creation & webcam init
-   --------------------------- */
-
 function addClassBox(){
   classCount++;
   const classBox = classTemplate.cloneNode(true);
   classBox.querySelector('.class-header span').textContent = `Class ${classCount}`;
   classContainer.insertBefore(classBox, classContainer.lastElementChild);
   initWebcam(classBox);
-  updateMenuOptions(classBox); // ensure initial state
+  updateMenuOptions(classBox);
 }
 
 function initWebcam(classBox){
@@ -427,7 +465,6 @@ function initWebcam(classBox){
   let stream = null;
   let interval = null;
 
-  // Start webcam
   webcamBtn.addEventListener('click', async () => {
     try {
       if(!stream){
@@ -437,7 +474,6 @@ function initWebcam(classBox){
         closeBtn.style.display="flex";
       }
       holdRow.style.display="flex";
-      // move the btn-row next to video for better UX
       if(video.parentNode && btnRow) video.parentNode.insertBefore(btnRow, video.nextSibling);
     } catch(err){
       console.error("Camera access denied or error:", err);
@@ -445,12 +481,10 @@ function initWebcam(classBox){
     }
   });
 
-  // Hold & record images
   holdBtn.addEventListener('mousedown', () => { interval = setInterval(()=>captureImage(),300); });
   holdBtn.addEventListener('mouseup',()=>clearInterval(interval));
   holdBtn.addEventListener('mouseleave',()=>clearInterval(interval));
 
-  // Close webcam
   closeBtn.addEventListener('click', ()=>{
     if(stream){
       stream.getTracks().forEach(track=>track.stop());
@@ -459,11 +493,9 @@ function initWebcam(classBox){
     video.style.display = "none";
     closeBtn.style.display = "none";
     holdRow.style.display = "none";
-    // move btnRow back to original place (before holdRow)
     if(classBox && btnRow && holdRow) classBox.insertBefore(btnRow, holdRow);
   });
 
-  // Upload images
   uploadBtn.addEventListener('click', ()=>{
     const input = document.createElement('input');
     input.type='file';
@@ -479,7 +511,6 @@ function initWebcam(classBox){
     input.click();
   });
 
-  // Capture image from video
   function captureImage(){
     if(!video || video.readyState < 2) return;
     const canvas = document.createElement('canvas');
@@ -490,15 +521,12 @@ function initWebcam(classBox){
     addImageToPreview(canvas.toDataURL("image/png"));
   }
 
-  // Add image to preview and update menu buttons
   function addImageToPreview(src){
     const imgContainer = document.createElement('div');
     imgContainer.classList.add('sample-item');
 
     const img = document.createElement('img');
     img.src = src;
-
-    // Open in modal on click
     img.addEventListener('click', ()=>{
       const modal = document.getElementById('imgModal');
       const modalImg = document.getElementById('modalImg');
@@ -511,7 +539,7 @@ function initWebcam(classBox){
     removeBtn.textContent='❌';
     removeBtn.onclick = ()=>{
       imgContainer.remove();
-      updateMenuOptions(classBox); // Ensure menu updates when single image is removed
+      updateMenuOptions(classBox);
     };
 
     imgContainer.appendChild(img);
@@ -519,16 +547,13 @@ function initWebcam(classBox){
     preview.appendChild(imgContainer);
     preview.scrollTop = preview.scrollHeight;
 
-    updateMenuOptions(classBox); // Ensure menu updates after new image is added
+    updateMenuOptions(classBox);
   }
 
-  // initialize menu state for this class box
   updateMenuOptions(classBox);
 }
 
-/* Initialize all existing class boxes on page load */
 document.querySelectorAll('.class-box').forEach(initWebcam);
 </script>
-
 </body>
 </html>
