@@ -2,8 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Teachable Machine UI - capture and manage image samples for machine learning">
 <title>Teachable Machine</title>
 <style>
+
+/* Responsive */
+@media (max-width: 768px) {
+  .class-box, .add-class { max-width: 90%; flex: 1 1 90%; }
+  .btn { font-size: 0.8rem; min-width: 80px; }
+  .sample-item img { width: 45px; height: 45px; }
+  video { max-width: 250px; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.5rem; margin: 20px 0; }
+  .btn { font-size: 0.75rem; padding: 6px; }
+  .add-class { height: 150px; font-size: 0.9rem; }
+  .video-container video { max-width: 200px; }
+}
+
 body {
   margin: 0;
   padding: 0;
