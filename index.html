@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Teachable Machine UI - capture and manage image samples for machine learning">
 <title>Teachable Machine</title>
+
+<!-- SEO Meta Tags -->
+<meta name="description" content="Teachable Machine UI - capture and manage image samples for machine learning projects.">
+<meta name="keywords" content="Teachable Machine, Machine Learning, Image Capture, Image Samples, Webcam, Upload Images">
+<meta name="author" content="Your Name">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:title" content="Teachable Machine - Capture & Manage Image Samples">
+<meta property="og:description" content="Use this interface to capture and manage image samples for ML projects using webcam or upload.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yourwebsite.com">
+<meta property="og:image" content="https://yourwebsite.com/preview.png">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
 <style>
 /* ---------- Base Styles ---------- */
 body {
@@ -348,10 +362,12 @@ video {
 }
 </style>
 </head>
+
 <body>
 <h1>Teachable Machine</h1>
 
 <div class="class-container" id="classContainer">
+  <!-- First Class Box Template -->
   <div class="class-box">
     <div class="class-header">
       <span contenteditable="true">Class 1</span>
@@ -363,14 +379,18 @@ video {
         </div>
       </div>
     </div>
+
     <div class="sample-label">Add image Samples:</div>
+
     <div class="btn-row">
       <button class="btn webcam-btn">📷 Webcam</button>
       <button class="btn upload-btn">⬆️ Upload</button>
     </div>
+
     <div class="btn-row hold-record-row">
       <button class="btn hold-record-btn">⏺ Hold & Record</button>
     </div>
+
     <div class="video-preview-container">
       <div class="video-container">
         <video autoplay playsinline></video>
@@ -379,17 +399,22 @@ video {
       <div class="samples-preview"></div>
     </div>
   </div>
+
+  <!-- Add Class Button -->
   <div class="add-class" onclick="addClassBox()">+ Add a class</div>
 </div>
 
+<!-- Image Lightbox Modal -->
 <div id="imgModal">
   <span onclick="document.getElementById('imgModal').style.display='none'">&times;</span>
   <img id="modalImg">
 </div>
 
+<!-- JS Dependencies -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
 <script>
-/* ---------   Global variables & helpers   ---------- */
+/* --------- Global JS Functions ---------- */
 const classContainer = document.getElementById('classContainer');
 const classTemplate = document.querySelector('.class-box').cloneNode(true);
 let classCount = 1;
