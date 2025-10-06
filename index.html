@@ -115,22 +115,37 @@ h1 {
   justify-content: center;
 }
 
+/* ---------- Updated Modern Buttons ---------- */
 .btn {
   flex: 1;
-  padding: 10px;
+  padding: 10px 14px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  background: #f1f1f1;
-  color: black;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #1e90ff, #0056b3);
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
 }
 
 .btn:hover {
-  background: #ddd;
+  background: linear-gradient(135deg, #2d9cff, #0070e0);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(0,0,0,0.4);
 }
 
+/* optional spacing fix for emoji icons */
+.btn::first-letter {
+  margin-right: 4px;
+}
+
+/* ---------- Hold & Record row ---------- */
 .hold-record-row {
   display: none;
   gap: 10px;
@@ -271,8 +286,6 @@ video {
 }
 
 /* ---------- Responsive adjustments ---------- */
-
-/* For tablets and small screens */
 @media (max-width: 768px) {
   .class-box, .add-class {
     width: 90%;
@@ -296,7 +309,6 @@ video {
   }
 }
 
-/* For mobile phones */
 @media (max-width: 480px) {
   h1 {
     font-size: 1.5rem;
@@ -336,7 +348,6 @@ video {
 }
 </style>
 </head>
-
 <body>
 <h1>Teachable Machine</h1>
 
@@ -378,9 +389,7 @@ video {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-/* ---------------------------
-   Global variables & helpers
-   --------------------------- */
+/* ---------   Global variables & helpers   ---------- */
 const classContainer = document.getElementById('classContainer');
 const classTemplate = document.querySelector('.class-box').cloneNode(true);
 let classCount = 1;
