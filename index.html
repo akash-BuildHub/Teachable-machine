@@ -405,12 +405,35 @@ video {
   overflow-x: auto;
   padding: 4px;
 }
+
+/* ---------- Updated Logo Style ---------- */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+}
+
+.logo {
+  height: 200px; /* Bigger logo */
+  width: auto;
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 100px; /* mobile adjustment */
+  }
+}
 </style>
 </head>
-
 <body>
-<h1>Teachable Machine</h1>
 
+<div class="logo-container">
+  <img src="C:/Users/akash/OneDrive/Desktop/Teachable machine/Startup Park logo.png" 
+       alt="Teachable Machine Logo" 
+       class="logo">
+</div>
 <div class="class-container" id="classContainer">
   <!-- First Class Box Template -->
   <div class="class-box">
@@ -603,9 +626,15 @@ function initWebcam(classBox){
     }
   });
 
+  // ----------------- Hold & Record Events -----------------
   holdBtn.addEventListener('mousedown', () => { interval = setInterval(()=>captureImage(),125); });
   holdBtn.addEventListener('mouseup',()=>clearInterval(interval));
   holdBtn.addEventListener('mouseleave',()=>clearInterval(interval));
+
+  // Mobile touch support
+  holdBtn.addEventListener('touchstart', e => { e.preventDefault(); interval = setInterval(()=>captureImage(),125); });
+  holdBtn.addEventListener('touchend', e => { e.preventDefault(); clearInterval(interval); });
+  holdBtn.addEventListener('touchcancel', e => { e.preventDefault(); clearInterval(interval); });
 
   closeBtn.addEventListener('click', ()=>{
     if(stream){
