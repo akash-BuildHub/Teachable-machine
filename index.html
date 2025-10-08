@@ -398,6 +398,15 @@ video {
     flex-wrap: wrap;
     justify-content: center;
   }
+
+  /* Mobile-friendly menu block */
+  .menu-options {
+    position: static;
+    width: 100%;
+    margin-top: 4px;
+    border-radius: 6px;
+    box-shadow: none;
+  }
 }
 
 /* Scrollable samples preview for mobile */
@@ -530,12 +539,12 @@ window.addEventListener('keydown', (e)=>{
   }
 });
 
-/* --------- Existing Functions ---------- */
+/* --------- Mobile-Friendly Menu ---------- */
 function toggleMenu(el) {
   const menu = el.querySelector('.menu-options');
   const isOpen = menu.style.display === "block";
   document.querySelectorAll('.menu-options').forEach(m => m.style.display = "none");
-  menu.style.display = isOpen ? "none" : "block";
+  if (!isOpen) menu.style.display = "block";
 }
 
 window.addEventListener("click", e => {
@@ -543,6 +552,7 @@ window.addEventListener("click", e => {
     document.querySelectorAll('.menu-options').forEach(m=>m.style.display="none");
 });
 
+/* --------- Existing Functions ---------- */
 function updateMenuOptions(box){
   if(!box) return;
   const preview = box.querySelector('.samples-preview');
@@ -627,12 +637,9 @@ function initWebcam(classBox){
     }
   });
 
-  // ----------------- Hold & Record Events -----------------
   holdBtn.addEventListener('mousedown', () => { interval = setInterval(()=>captureImage(),125); });
   holdBtn.addEventListener('mouseup',()=>clearInterval(interval));
   holdBtn.addEventListener('mouseleave',()=>clearInterval(interval));
-
-  // Mobile touch support
   holdBtn.addEventListener('touchstart', e => { e.preventDefault(); interval = setInterval(()=>captureImage(),125); });
   holdBtn.addEventListener('touchend', e => { e.preventDefault(); clearInterval(interval); });
   holdBtn.addEventListener('touchcancel', e => { e.preventDefault(); clearInterval(interval); });
