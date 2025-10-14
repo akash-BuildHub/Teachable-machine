@@ -69,9 +69,11 @@ h1 {
 .class-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;   /* allow text to wrap without moving menu */
   font-size: 20px;
   font-weight: bold;
+  gap: 10px;
+  flex-wrap: wrap;           /* allow content to wrap */
 }
 
 .class-header span[contenteditable="true"] {
@@ -79,16 +81,12 @@ h1 {
   border-bottom: 1px dashed transparent;
   display: inline-block;
   min-width: 100px;
+  max-width: calc(100% - 40px); /* leave space for menu */
   position: relative;
-}
-
-.class-header span[contenteditable="true"] {
-  outline: none;
-  border-bottom: 1px dashed transparent;
-  display: inline-block;
-  min-width: 100px;
-  position: relative;
-  white-space: nowrap; /* keeps it in one line */
+  word-wrap: break-word;     /* allow text to wrap */
+  white-space: normal;       /* allow multiple lines */
+  font-size: 16px;
+  line-height: 1.2;
 }
 
 /* show dashed underline on focus */
@@ -96,24 +94,25 @@ h1 {
   border-bottom: 1px dashed black;
 }
 
-/* ✅ single-line, small placeholder */
+/* Placeholder: always single line */
 .class-header span[contenteditable="true"]:empty::before,
 .class-header span[contenteditable="true"]:not(:focus):has(br:only-child)::before {
   content: attr(data-placeholder);
   color: #888;
   font-style: italic;
-  font-size: 13px; /* smaller text */
+  font-size: 13px;
   position: absolute;
   left: 0;
   top: 0;
   pointer-events: none;
-  white-space: nowrap; /* ensures one line only */
+  white-space: nowrap;  /* KEEP placeholder in a single line */
 }
 
 /* keeps the editable area always clickable */
 .class-header span[contenteditable="true"]:empty::after {
   content: "\200B"; /* zero-width space */
 }
+
 
 .menu {
   position: relative;
