@@ -77,10 +77,42 @@ h1 {
 .class-header span[contenteditable="true"] {
   outline: none;
   border-bottom: 1px dashed transparent;
+  display: inline-block;
+  min-width: 100px;
+  position: relative;
 }
 
+.class-header span[contenteditable="true"] {
+  outline: none;
+  border-bottom: 1px dashed transparent;
+  display: inline-block;
+  min-width: 100px;
+  position: relative;
+  white-space: nowrap; /* keeps it in one line */
+}
+
+/* show dashed underline on focus */
 .class-header span[contenteditable="true"]:focus {
   border-bottom: 1px dashed black;
+}
+
+/* ✅ single-line, small placeholder */
+.class-header span[contenteditable="true"]:empty::before,
+.class-header span[contenteditable="true"]:not(:focus):has(br:only-child)::before {
+  content: attr(data-placeholder);
+  color: #888;
+  font-style: italic;
+  font-size: 13px; /* smaller text */
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  white-space: nowrap; /* ensures one line only */
+}
+
+/* keeps the editable area always clickable */
+.class-header span[contenteditable="true"]:empty::after {
+  content: "\200B"; /* zero-width space */
 }
 
 .menu {
@@ -448,7 +480,7 @@ video {
   <!-- First Class Box Template -->
   <div class="class-box">
     <div class="class-header">
-      <span contenteditable="true">Class 1</span>
+      <span contenteditable="true" data-placeholder="Type class name...">Class 1</span>
       <div class="menu" onclick="toggleMenu(this)">⋮
         <div class="menu-options">
           <div onclick="deleteClass(this)">Delete class</div>
