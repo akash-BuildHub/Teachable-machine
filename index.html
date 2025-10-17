@@ -69,11 +69,11 @@ h1 {
 .class-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;   /* allow text to wrap without moving menu */
+  align-items: flex-start;
   font-size: 20px;
   font-weight: bold;
   gap: 10px;
-  flex-wrap: wrap;           /* allow content to wrap */
+  flex-wrap: wrap;
 }
 
 .class-header span[contenteditable="true"] {
@@ -81,20 +81,18 @@ h1 {
   border-bottom: 1px dashed transparent;
   display: inline-block;
   min-width: 100px;
-  max-width: calc(100% - 40px); /* leave space for menu */
+  max-width: calc(100% - 40px);
   position: relative;
-  word-wrap: break-word;     /* allow text to wrap */
-  white-space: normal;       /* allow multiple lines */
+  word-wrap: break-word;
+  white-space: normal;
   font-size: 16px;
   line-height: 1.2;
 }
 
-/* show dashed underline on focus */
 .class-header span[contenteditable="true"]:focus {
   border-bottom: 1px dashed black;
 }
 
-/* Placeholder: always single line */
 .class-header span[contenteditable="true"]:empty::before,
 .class-header span[contenteditable="true"]:not(:focus):has(br:only-child)::before {
   content: attr(data-placeholder);
@@ -105,14 +103,12 @@ h1 {
   left: 0;
   top: 0;
   pointer-events: none;
-  white-space: nowrap;  /* KEEP placeholder in a single line */
+  white-space: nowrap;
 }
 
-/* keeps the editable area always clickable */
 .class-header span[contenteditable="true"]:empty::after {
-  content: "\200B"; /* zero-width space */
+  content: "\200B";
 }
-
 
 .menu {
   position: relative;
@@ -145,7 +141,6 @@ h1 {
   background: #f2f2f2;
 }
 
-/* global disabled-option definition */
 .disabled-option {
   color: #aaa !important;
   pointer-events: none;
@@ -162,7 +157,6 @@ h1 {
   justify-content: center;
 }
 
-/* ---------- Updated Modern Buttons ---------- */
 .btn {
   flex: 1;
   padding: 10px 14px;
@@ -187,12 +181,10 @@ h1 {
   box-shadow: 0 5px 14px rgba(0,0,0,0.4);
 }
 
-/* optional spacing fix for emoji icons */
 .btn::first-letter {
   margin-right: 4px;
 }
 
-/* ---------- Hold & Record row ---------- */
 .hold-record-row {
   display: none;
   gap: 10px;
@@ -213,11 +205,19 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 video {
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   border-radius: 8px;
+  display: none;
+}
+
+.video-timeline {
+  width: 100%;
+  margin-top: 8px;
   display: none;
 }
 
@@ -240,7 +240,6 @@ video {
   display: none;
 }
 
-/* FLEXBOX layout for captured images */
 .samples-preview {
   display: flex;
   flex-wrap: wrap;
@@ -301,7 +300,6 @@ video {
   color: #2d2dff;
 }
 
-/* ---------- Premium Lightbox Style ---------- */
 #imgModal {
   display: none;
   position: fixed;
@@ -331,7 +329,6 @@ video {
   box-shadow: 0 0 80px rgba(0,0,0,1), 0 0 40px rgba(255,255,255,0.2);
 }
 
-/* Navigation Arrows */
 .nav-btn {
   position: absolute;
   top: 50%;
@@ -357,7 +354,6 @@ video {
 .prev-btn { left: 40px; }
 .next-btn { right: 40px; }
 
-/* Close Button */
 .close-btn {
   position: absolute;
   top: 25px;
@@ -430,7 +426,6 @@ video {
     justify-content: center;
   }
 
-  /* Mobile-friendly menu block */
   .menu-options {
     position: static;
     width: 100%;
@@ -440,13 +435,11 @@ video {
   }
 }
 
-/* Scrollable samples preview for mobile */
 .samples-preview {
   overflow-x: auto;
   padding: 4px;
 }
 
-/* ---------- Updated Logo Style ---------- */
 .logo-container {
   display: flex;
   justify-content: center;
@@ -456,13 +449,13 @@ video {
 }
 
 .logo {
-  height: 200px; /* Bigger logo */
+  height: 200px;
   width: auto;
 }
 
 @media (max-width: 480px) {
   .logo {
-    height: 100px; /* mobile adjustment */
+    height: 100px;
   }
 }
 </style>
@@ -500,13 +493,13 @@ video {
       <button class="btn hold-record-btn">⏺ Hold & Record</button>
     </div>
 
-    <div class="video-preview-container">
-      <div class="video-container">
-        <video autoplay playsinline></video>
-        <button class="close-video-btn">❌</button>
-      </div>
-      <div class="samples-preview"></div>
+    <div class="video-container">
+      <video playsinline></video>
+      <input type="range" class="video-timeline" min="0" max="100" value="0" step="0.1">
+      <button class="close-video-btn">❌</button>
     </div>
+
+    <div class="samples-preview"></div>
   </div>
 
   <!-- Add Class Button -->
@@ -639,6 +632,7 @@ function addClassBox(){
   updateMenuOptions(classBox);
 }
 
+/* --------- Main Function for Video & Webcam ---------- */
 function initWebcam(classBox){
   const webcamBtn = classBox.querySelector('.webcam-btn');
   const video = classBox.querySelector('video');
@@ -648,59 +642,141 @@ function initWebcam(classBox){
   const closeBtn = classBox.querySelector('.close-video-btn');
   const btnRow = classBox.querySelector('.btn-row');
   const uploadBtn = classBox.querySelector('.upload-btn');
+  const timeline = classBox.querySelector('.video-timeline');
 
   let stream = null;
   let interval = null;
 
+  // ---------- Webcam Capture ----------
   webcamBtn.addEventListener('click', async () => {
     try {
-      if(!stream){
-        stream = await navigator.mediaDevices.getUserMedia({video:true});
-        video.srcObject = stream;
-        video.style.display="block";
-        closeBtn.style.display="flex";
+      // Stop any existing stream
+      if(stream){ 
+        stream.getTracks().forEach(track => track.stop()); 
+        stream = null; 
       }
-      holdRow.style.display="flex";
-      if(video.parentNode && btnRow) video.parentNode.insertBefore(btnRow, video.nextSibling);
+      
+      // Get webcam stream
+      stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { width: 640, height: 480 } 
+      });
+      
+      video.srcObject = stream;
+      video.style.display = 'block';
+      closeBtn.style.display = 'flex';
+      holdRow.style.display = 'flex';
+      
+      // Hide timeline for webcam
+      if(timeline) {
+        timeline.style.display = 'none';
+      }
+      
+      // Play the video
+      await video.play();
+      
     } catch(err){
       console.error("Camera access denied or error:", err);
-      alert("Unable to access camera. Check permissions.");
+      alert("Unable to access camera. Check permissions or try a different browser.");
     }
   });
 
-  holdBtn.addEventListener('mousedown', () => { interval = setInterval(()=>captureImage(),125); });
-  holdBtn.addEventListener('mouseup',()=>clearInterval(interval));
-  holdBtn.addEventListener('mouseleave',()=>clearInterval(interval));
-  holdBtn.addEventListener('touchstart', e => { e.preventDefault(); interval = setInterval(()=>captureImage(),125); });
-  holdBtn.addEventListener('touchend', e => { e.preventDefault(); clearInterval(interval); });
-  holdBtn.addEventListener('touchcancel', e => { e.preventDefault(); clearInterval(interval); });
-
-  closeBtn.addEventListener('click', ()=>{
-    if(stream){
-      stream.getTracks().forEach(track=>track.stop());
-      stream = null;
-    }
-    video.style.display = "none";
-    closeBtn.style.display = "none";
-    holdRow.style.display = "none";
-    if(classBox && btnRow && holdRow) classBox.insertBefore(btnRow, holdRow);
-  });
-
-  uploadBtn.addEventListener('click', ()=>{
+  // ---------- Upload (Image & Video) ----------
+  uploadBtn.addEventListener('click', () => {
     const input = document.createElement('input');
-    input.type='file';
-    input.accept='image/*';
-    input.multiple=true;
+    input.type = 'file';
+    input.accept = 'image/*,video/*';
+    input.multiple = false;
     input.onchange = e => {
-      Array.from(input.files).forEach(file=>{
+      const file = input.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+
+      // IMAGE
+      if(file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = ev=> addImageToPreview(ev.target.result);
+        reader.onload = ev => addImageToPreview(ev.target.result);
         reader.readAsDataURL(file);
-      });
+      } 
+      // VIDEO
+      else if(file.type.startsWith('video/')) {
+        // Stop any existing stream
+        if(stream){ 
+          stream.getTracks().forEach(track => track.stop()); 
+          stream = null; 
+        }
+
+        video.src = url;
+        video.style.display = 'block';
+        closeBtn.style.display = 'flex';
+        holdRow.style.display = 'flex';
+
+        // Show and setup timeline for video
+        if(timeline) {
+          timeline.style.display = 'block';
+          timeline.min = 0;
+          timeline.max = 0;
+          timeline.value = 0;
+          timeline.step = 0.01;
+        }
+
+        video.addEventListener('loadedmetadata', () => {
+          if(timeline) {
+            timeline.max = video.duration;
+            timeline.value = video.currentTime;
+          }
+        });
+
+        timeline.addEventListener('input', () => {
+          video.currentTime = parseFloat(timeline.value);
+        });
+      }
     };
     input.click();
   });
 
+  // ---------- Hold & Record (Frame-by-frame) ----------
+  const holdFn = () => {
+    if(!video) return;
+    interval = setInterval(()=>{
+      if(video.readyState >= 2){
+        captureImage();
+        // For uploaded videos, advance timeline
+        if(!stream && timeline) {
+          video.currentTime = Math.min(video.currentTime + 0.125, video.duration);
+          timeline.value = video.currentTime;
+          if(video.currentTime >= video.duration) clearInterval(interval);
+        }
+      }
+    }, 125);
+  };
+
+  const releaseFn = () => { clearInterval(interval); };
+
+  holdBtn.addEventListener('mousedown', holdFn);
+  holdBtn.addEventListener('mouseup', releaseFn);
+  holdBtn.addEventListener('mouseleave', releaseFn);
+  holdBtn.addEventListener('touchstart', e => { e.preventDefault(); holdFn(); });
+  holdBtn.addEventListener('touchend', e => { e.preventDefault(); releaseFn(); });
+  holdBtn.addEventListener('touchcancel', e => { e.preventDefault(); releaseFn(); });
+
+  // ---------- Close Video ----------
+  closeBtn.addEventListener('click', ()=>{
+    if(stream){ 
+      stream.getTracks().forEach(track=>track.stop()); 
+      stream = null; 
+    }
+    video.pause();
+    video.src = "";
+    video.srcObject = null;
+    video.style.display = "none";
+    holdRow.style.display = "none";
+    closeBtn.style.display = "none";
+    if(timeline){ 
+      timeline.style.display = "none";
+    }
+  });
+
+  // ---------- Capture Frame ----------
   function captureImage(){
     if(!video || video.readyState < 2) return;
     const canvas = document.createElement('canvas');
@@ -711,6 +787,7 @@ function initWebcam(classBox){
     addImageToPreview(canvas.toDataURL("image/png"));
   }
 
+  // ---------- Add Image to Preview ----------
   function addImageToPreview(src){
     const imgContainer = document.createElement('div');
     imgContainer.classList.add('sample-item');
@@ -726,9 +803,9 @@ function initWebcam(classBox){
     const removeBtn = document.createElement('button');
     removeBtn.classList.add('remove-img-btn');
     removeBtn.textContent='❌';
-    removeBtn.onclick = ()=>{
-      imgContainer.remove();
-      updateMenuOptions(classBox);
+    removeBtn.onclick = ()=>{ 
+      imgContainer.remove(); 
+      updateMenuOptions(classBox); 
     };
 
     imgContainer.appendChild(img);
@@ -742,7 +819,9 @@ function initWebcam(classBox){
   updateMenuOptions(classBox);
 }
 
+// Initialize all existing class boxes
 document.querySelectorAll('.class-box').forEach(initWebcam);
 </script>
+
 </body>
 </html>
